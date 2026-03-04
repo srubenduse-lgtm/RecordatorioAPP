@@ -1,0 +1,7 @@
+{
+  "name": "Asistente de Recordatorios",
+  "description": "Aplicación diseñada para adultos mayores que permite programar y recibir recordatorios de tareas mediante texto o voz.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
