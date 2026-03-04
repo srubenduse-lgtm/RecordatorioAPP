@@ -2,7 +2,10 @@ import { GoogleGenAI, Type } from "@google/genai";
 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
-export async function parseReminderRequest(input: string, currentTimeISO: string): Promise<{ task: string; datetime: string; isRecurringYearly?: boolean } | null> {
+export async function parseReminderRequest(input: string, currentTimeISO: string): Promise<{ 
+  data: { task: string; datetime: string; isRecurringYearly?: boolean } | null;
+  tokens?: number;
+}> {
   try {
     const response = await ai.models.generateContent({
       model: "gemini-3-flash-preview",
@@ -26,12 +29,14 @@ Solicitud: "${input}"`,
       }
     });
     
+    const tokens = response.usageMetadata?.totalTokenCount;
+
     if (response.text) {
-      return JSON.parse(response.text);
+      return { data: JSON.parse(response.text), tokens };
     }
-    return null;
+    return { data: null, tokens };
   } catch (error) {
     console.error("Error parsing reminder:", error);
-    return null;
+    return { data: null };
   }
 }

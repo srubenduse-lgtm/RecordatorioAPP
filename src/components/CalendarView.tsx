@@ -76,7 +76,7 @@ export function CalendarView({ reminders, onEdit, onDelete }: CalendarViewProps)
               <button
                 key={day.toString()}
                 onClick={() => setSelectedDate(day)}
-                className={`relative flex h-16 flex-col items-center justify-center rounded-2xl border-2 transition-all ${
+                className={`group relative flex h-16 flex-col items-center justify-center rounded-2xl border-2 transition-all ${
                   !isCurrentMonth ? "text-gray-300 border-transparent" :
                   isSelected ? "border-primary-600 bg-primary-50 text-primary-700" :
                   isDayToday ? "border-primary-200 bg-primary-50 text-primary-800" :
@@ -87,12 +87,37 @@ export function CalendarView({ reminders, onEdit, onDelete }: CalendarViewProps)
                   {format(day, "d")}
                 </span>
                 {dayReminders.length > 0 && (
-                  <div className="absolute bottom-1.5 flex gap-1">
-                    {dayReminders.slice(0, 3).map((_, i) => (
-                      <div key={i} className={`h-2 w-2 rounded-full ${isSelected ? "bg-primary-600" : "bg-primary-400"}`} />
-                    ))}
-                    {dayReminders.length > 3 && <div className="h-2 w-2 rounded-full bg-primary-400" />}
-                  </div>
+                  <>
+                    <div className="absolute bottom-1.5 flex gap-1">
+                      {dayReminders.slice(0, 3).map((_, i) => (
+                        <div key={i} className={`h-2 w-2 rounded-full ${isSelected ? "bg-primary-600" : "bg-primary-400"}`} />
+                      ))}
+                      {dayReminders.length > 3 && <div className="h-2 w-2 rounded-full bg-primary-400" />}
+                    </div>
+                    
+                    {/* Tooltip (Pop-up) */}
+                    <div className="pointer-events-none absolute bottom-full left-1/2 z-50 mb-2 -translate-x-1/2 w-max max-w-[280px] opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100">
+                      <div className="rounded-xl bg-gray-900 px-3 py-2 text-left text-xs text-white shadow-xl">
+                        <p className="mb-1.5 border-b border-gray-700 pb-1 font-bold text-gray-300">
+                          {format(day, "d 'de' MMMM", { locale: es })}
+                        </p>
+                        <ul className="space-y-2">
+                          {dayReminders.map(r => (
+                            <li key={r.id} className="flex flex-col leading-tight">
+                              <span className="font-semibold text-primary-300">
+                                {format(parseISO(r.datetime), "h:mm a")}
+                                {r.isRecurringYearly && " (Anual)"}
+                              </span>
+                              <span className="whitespace-normal break-words text-gray-100">
+                                {r.task}
+                              </span>
+                            </li>
+                          ))}
+                        </ul>
+                        <div className="absolute -bottom-1 left-1/2 h-3 w-3 -translate-x-1/2 rotate-45 bg-gray-900"></div>
+                      </div>
+                    </div>
+                  </>
                 )}
               </button>
             );

@@ -39,3 +39,36 @@
   --color-primary-800: var(--primary-800);
   --color-primary-900: var(--primary-900);
 }
+
+/* 
+  Escalado automático según el dispositivo.
+  Al cambiar el font-size del html, todas las clases de Tailwind que usan 'rem'
+  (text-xl, w-12, p-4, etc.) crecerán o se encogerán proporcionalmente.
+*/
+html {
+  font-size: 16px; /* Teléfonos móviles pequeños */
+}
+
+@media (min-width: 640px) {
+  html {
+    font-size: 18px; /* Tablets pequeñas y teléfonos grandes */
+  }
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 20px; /* Tablets (iPad) */
+  }
+}
+
+@media (min-width: 1024px) {
+  html {
+    font-size: 22px; /* Laptops y computadoras de escritorio */
+  }
+}
+
+@media (min-width: 1536px) {
+  html {
+    font-size: 26px; /* Pantallas muy grandes o Smart TVs */
+  }
+}

@@ -4,7 +4,7 @@ import { parseReminderRequest } from "../services/gemini";
 import { Reminder } from "../types";
 
 interface ReminderInputProps {
-  onAddReminder: (reminder: Omit<Reminder, 'id' | 'status' | 'createdAt'>) => { success: boolean; error?: string };
+  onAddReminder: (reminder: Omit<Reminder, 'id' | 'status' | 'createdAt'>, tokens?: number) => { success: boolean; error?: string };
 }
 
 export function ReminderInput({ onAddReminder }: ReminderInputProps) {
@@ -79,14 +79,14 @@ export function ReminderInput({ onAddReminder }: ReminderInputProps) {
 
     try {
       const nowISO = new Date().toISOString();
-      const parsed = await parseReminderRequest(input, nowISO);
+      const { data: parsed, tokens } = await parseReminderRequest(input, nowISO);
       
       if (parsed && parsed.task && parsed.datetime) {
         const result = onAddReminder({
           task: parsed.task,
           datetime: parsed.datetime,
           isRecurringYearly: parsed.isRecurringYearly || false
-        });
+        }, tokens);
         
         if (result.success) {
           setInput("");

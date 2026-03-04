@@ -31,6 +31,7 @@ export default function App() {
   const [editingReminder, setEditingReminder] = useState<Reminder | null>(null);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [viewMode, setViewMode] = useState<'list' | 'calendar'>('list');
+  const [totalTokens, setTotalTokens] = useState(0);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(() => {
     const saved = localStorage.getItem("userProfile");
     return saved ? JSON.parse(saved) : null;
@@ -93,7 +94,11 @@ export default function App() {
     return () => clearInterval(interval);
   }, [reminders, activeReminder, userProfile]);
 
-  const handleAddReminder = (newReminderData: Omit<Reminder, 'id' | 'status' | 'createdAt'>) => {
+  const handleAddReminder = (newReminderData: Omit<Reminder, 'id' | 'status' | 'createdAt'>, tokens?: number) => {
+    if (tokens) {
+      setTotalTokens(prev => prev + tokens);
+    }
+
     // Check for duplicates (same task text and same day)
     const isDuplicate = reminders.some(r => 
       r.status === 'pending' && 
@@ -208,6 +213,13 @@ export default function App() {
           )}
         </main>
       </div>
+
+      {totalTokens > 0 && (
+        <div className="mt-8 text-center text-sm text-gray-400">
+          <p>Tokens de IA utilizados en esta sesión: {totalTokens.toLocaleString()}</p>
+          <p>Restantes (límite gratuito de 1 millón por minuto): {(1000000 - totalTokens).toLocaleString()}</p>
+        </div>
+      )}
 
       <ReminderPopup 
         reminder={activeReminder} 
